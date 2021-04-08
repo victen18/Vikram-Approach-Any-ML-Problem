@@ -1,5 +1,6 @@
 import os
 import config
+import model_dispatcher
 import argparse
 
 import joblib
@@ -9,7 +10,7 @@ from sklearn import tree
 
 
 
-def run(fold):
+def run(fold,model):
 
     df = pd.read_csv(config.TRAINING_FILE)
 
@@ -23,7 +24,7 @@ def run(fold):
     x_valid = df_valid.drop("label",axis=1).values
     y_valid = df_valid.label.values
 
-    clf = tree.DecisionTreeClassifier()
+    clf = model_dispatcher.models[model]
 
     clf.fit(x_train,y_train)
 
@@ -37,5 +38,7 @@ def run(fold):
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--fold",type=int)
+    parser.add_argument("--model",type=str)
     args = parser.parse_args()
-    run(fold=args.fold)
+    run(fold=args.fold,
+        model=args.model)
